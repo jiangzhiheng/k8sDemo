@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: cm-tomcat-volumemount-config
+spec:
+  containers:
+  - name: cm-test-tomcat
+    image: kubeguide/tomcat-app:v1
+    ports:
+    - containerPort: 8080
+    volumeMounts:
+    - name: serverxml
+      mountPath: /configfiles
+  volumes:
+  - name: serverxml    # Volumes name
+    configMap:
+      name: cm-tomcatconfigfiles   # configMap name
+      items:
+      - key: server.xml    # configMap data key
+        path: server.xml   # as filename mount to container
+      - key: logging.properties
+        path: logging.properties
+    
