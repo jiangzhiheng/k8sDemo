@@ -1,0 +1,10 @@
+apiVersion: policy/v1beta1
+kind: PodSecurityPolicy
+metadata: 
+  name: allow-flex-volumes
+spec:
+  volumes: 
+  - flexVolume
+  allowedFlexVolumes:
+  - driver: example/lvm
+  - driver: example/cifs
