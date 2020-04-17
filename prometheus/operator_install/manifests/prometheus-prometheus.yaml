@@ -17,6 +17,8 @@ spec:
   podMonitorNamespaceSelector: {}
   podMonitorSelector: {}
   replicas: 2
+  secrets:
+  - etcd-cert
   resources:
     requests:
       memory: 400Mi
