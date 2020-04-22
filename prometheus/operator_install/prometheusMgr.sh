@@ -6,6 +6,7 @@ WORKDIR=/root/k8sDemo/prometheus/operator_install
 if [[ $1 -eq "intall" ]];then
 	cd $WORKDIR
 	kubectl create -f manifests/setup
+	sleep 10
 	until kubectl get servicemonitors --all-namespaces ; do date; sleep 1; echo ""; done
 	kubectl create -f manifests/
 elif [[ $1 -eq "uninstall" ]];then

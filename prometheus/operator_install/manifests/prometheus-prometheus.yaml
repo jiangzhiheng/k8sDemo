@@ -17,8 +17,6 @@ spec:
   podMonitorNamespaceSelector: {}
   podMonitorSelector: {}
   replicas: 2
-  secrets:
-  - etcd-cert
   resources:
     requests:
       memory: 400Mi
@@ -31,6 +29,9 @@ spec:
     runAsNonRoot: true
     runAsUser: 1000
   serviceAccountName: prometheus-k8s
+  additionalScrapeConfigs:
+    name: additional-configs
+    key: prometheus-additional.yaml
   serviceMonitorNamespaceSelector: {}
   serviceMonitorSelector: {}
   version: v2.15.2
