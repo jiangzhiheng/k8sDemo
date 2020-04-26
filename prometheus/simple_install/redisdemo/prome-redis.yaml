@@ -39,6 +39,9 @@ kind: Service
 metadata:
   name: redis
   namespace: kube-ops
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "9121"
 spec:
   selector:
     app: redis

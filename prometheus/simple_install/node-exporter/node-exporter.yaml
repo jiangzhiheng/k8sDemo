@@ -5,36 +5,73 @@ metadata:
   namespace: kube-ops
   labels:
     k8s-app: node-exporter
+    kubernetes.io/cluster-service: "true"
+    addonmanager.kubernetes.io/mode: Reconcile
 spec:
+  updateStrategy:
+    type: OnDelete
   selector:
     matchLabels:
       k8s-app: node-exporter
+      version: v0.17.0
   template:
     metadata:
       labels:
         k8s-app: node-exporter
+        version: v0.17.0
     spec:
       containers:
-      - image: prom/node-exporter
-        name: node-exporter
+      - image: prom/node-exporter:v0.17.0
+        name: prometheus-node-exporter
+        imagePullPolicy: IfNotPresent
+        args:
+        - --path.procfs=/host/proc
+        - --path.sysfs=/host/sys
         ports:
         - containerPort: 9100
-          protocol: TCP
-          name: http
+          hostPort: 9100
+          name: metrics
+        volumeMounts:
+        - name: proc
+          mountPath: /host/proc
+          readOnly: true
+        - name: sys
+          mountPath: /host/sys
+          readOnly: true
+        resources:
+          limits:
+            cpu: 1
+            memory: 512Mi
+          requests:
+            cpu: 100m
+            memory: 50Mi
+      hostNetwork: true
+      hostPID: true
+      volumes:
+      - name: proc
+        hostPath:
+          path: /proc
+      - name: sys
+        hostPath:
+          path: /sys
 ---
 apiVersion: v1
 kind: Service
 metadata:
   labels:
     k8s-app: node-exporter
+    kubernetes.io/cluster-service: "true"
+    addonmanager.kubernetes.io/mode: Reconcile
   name: node-exporter
   namespace: kube-ops
+  annotations: 
+    prometheus.io/scrape: "true"
 spec:
+  clusterIP: None
   ports:
-  - name: http
+  - name: metrics
     port: 9100
-    nodePort: 31672
     protocol: TCP
-  type: NodePort
+    targetPort: 9100
   selector:
     k8s-app: node-exporter
