@@ -1,0 +1,23 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: grafana-chown
+  namespace: kube-ops
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: grafana-chown
+        image: busybox:latest
+        imagePullPolicy: IfNotPresent
+        command: ["chown","-R","472:472","/var/lib/grafana"]
+        volumeMounts:
+        - name: storage
+          mountPath: /var/lib/grafana
+          subPath: grafana
+      volumes:
+      - name: storage
+        hostPath:
+          path: /tmp/grafana
+
